@@ -2,6 +2,9 @@ import re
 from stop_words import get_stop_words
 import unicodedata
 from fuzzywuzzy import process, fuzz
+from nltk.stem.snowball import SnowballStemmer
+stm = SnowballStemmer("spanish", ignore_stopwords=True)
+
 from tesis_orm import Tesis, conectar_a_bd
 bd = conectar_a_bd()
 
@@ -12,6 +15,7 @@ def normalizar_titulo(titulo):
     titulo = normalizar_digitos(titulo)
     titulo = quitar_stopwords(titulo)
     titulo = quitar_acentos(titulo)
+    titulo = lematizar_palabras(titulo)
     return titulo
 
 
@@ -24,6 +28,15 @@ def quitar_stopwords(titulo):
     titulo = [
         palabra for palabra in titulo
         if palabra not in stop_words
+    ]
+
+    return " ".join(titulo)
+
+
+def lematizar_palabras(titulo):
+    titulo = titulo.split()
+    titulo = [
+        stm.stem(palabra) for palabra in titulo
     ]
 
     return " ".join(titulo)
