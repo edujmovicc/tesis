@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block contenido %}
+    <div class="container">
+        <form method="POST" action="/editar_alumno/{{ alumno.indice }}">
+            <div class="form-group">
+                <label for="">Cédula: </label>
+                <input class="form-control" name="cedula" type="text" value="{{ alumno.cedula }}">
+            </div>
+            <div class="form-group">
+                <label for="">Nombres: </label>
+                <input class="form-control" name="nombre" type="text" value="{{ alumno.nombre }}">
+            </div>
+            <div class="form-group">
+                <label for="">Apellidos: </label>
+                <input class="form-control" name="apellido" type="text" value="{{ alumno.apellido }}">
+            </div>
+            <div class="form-group">
+                <label for="">Carrera: </label>
+                <input class="form-control" name="carrera" type="text" value="{{ alumno.carrera }}">
+            </div>
+            <input class="form-control" type="submit" value="Guardar">
+        </form>
+    </div>
+{% endblock %}

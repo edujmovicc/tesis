@@ -26,8 +26,9 @@ class Tesis(Base):
     indice = Column(String, primary_key=True, default=generar_identificador_unico)
     titulo = Column(String)
     titulo_normalizado = Column(String)
-    tutor = Column(String)
-    nombre_autor = Column(String, ForeignKey("alumnos.indice"))
+    nombre_tutor = Column(String, ForeignKey("tutores.nombre"))
+    tutor = relationship("Tutor", backref="_tesis")
+    nombre_autor = Column(String, ForeignKey("alumnos.nombre"))
     autor = relationship("Alumno", backref="_tesis")
 
 
@@ -36,7 +37,16 @@ class Alumno(Base):
 
     indice = Column(String, primary_key=True, default=generar_identificador_unico)
     nombre = Column(String)
-    apellido = Column(String)
+    apellido = Column(String, default="")
     cedula = Column(String)
-    carrera = Column(String)
+    carrera = Column(String, default="")
 
+ 
+class Tutor(Base):
+    __tablename__ = "tutores"
+
+    indice = Column(String, primary_key=True, default=generar_identificador_unico)
+    nombre = Column(String)
+    apellido = Column(String, default="")
+    cedula = Column(String, default="")
+    linea_investigacion = Column(String, default="")
