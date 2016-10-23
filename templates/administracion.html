@@ -2,13 +2,19 @@
 {% block contenido %}
     <div class="container">
         <ul class="nav nav-tabs" role="tablist">
-  <li class="nav-item {{ buscando_alumnos }}">
-    <a class="nav-link" data-toggle="tab" href="#alumnos" role="tab">Administrar alumnos</a>
-  </li>
-  <li class="nav-item {{ buscando_tesis }}">
-    <a class="nav-link" data-toggle="tab" href="#titulos" role="tab">Administrar títulos</a>
-  </li>
-</ul>
+            <li class="nav-item {{ buscando_alumnos }}">
+                <a class="nav-link" data-toggle="tab" href="#alumnos" role="tab">Administrar alumnos</a>
+            </li>
+            <li class="nav-item {{ buscando_tesis }}">
+                <a class="nav-link" data-toggle="tab" href="#titulos" role="tab">Administrar títulos</a>
+            </li>
+            <li class="nav-item {{ buscando_tutores }}">
+                <a class="nav-link" data-toggle="tab" href="#tutores" role="tab">Administrar tutores</a>
+            </li>
+            <li class="nav-item {{ buscando_lineas_investigacion }}">
+                <a class="nav-link" data-toggle="tab" href="#lineas_investigacion" role="tab">Administrar líneas de investigación</a>
+            </li>
+        </ul>
 
 <!-- Tab panes -->
 <div class="tab-content">
@@ -81,6 +87,119 @@
                     </tbody>
                 </table>
             {% endif %}
+        </div>
+    </div>
+
+    <div class="tab-pane {{ buscando_tutores }}" id="tutores" role="tabpanel">
+        <div class="container">
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Agregar tutor</div>
+                <div class="panel-body">
+                    <form method="POST" action="/agregar_tutor">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="agregar_tutor_nombre" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Apellido: </label>
+                            <input class="form-control" name="agregar_tutor_apellido" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Cédula: </label>
+                            <input class="form-control" name="agregar_tutor_cedula" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Línea de investigación: </label>
+                            <input class="form-control" name="agregar_tutor_nombre" type="text">
+                        </div>
+                        <input class="form-control" type="submit" value="Agregar">
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Buscar tutor</div>
+                <div class="panel-body">
+                    <form method="POST" action="/buscar_tutores">
+                        <div class="form-group">
+                            <label for="">Cédula de identidad: </label>
+                            <input class="form-control" name="cedula_tutor" type="text">
+                        </div>
+                        <input class="form-control" type="submit">
+                    </form>
+                    {% if tutores %}
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cédula</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Línea de investigación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tutor in tutores %}
+                                    <tr>
+                                        <td><a href="/editar_tutor/{{ tutor.indice }}">{{ tutor.cedula }}</a></td>
+                                        <td>{{ tutor.nombre }}</td>
+                                        <td>{{ tutor.apellido }}</td>
+                                        <td>{{ tutor.linea_investigacion }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane {{ buscando_lineas_investigacion }}" id="lineas_investigacion" role="tabpanel">
+        <div class="container">
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Agregar línea de investigación</div>
+                <div class="panel-body">
+                    <form method="POST" action="/agregar_linea_investigacion">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="linea_investigacion" type="text">
+                        </div>
+                        <input class="form-control" type="submit" value="Agregar">
+                    </form>
+                </div>
+            </div>
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Buscar líneas de investigación</div>
+                <div class="panel-body">
+                    <form method="POST" action="/buscar_lineas_investigacion">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="linea_investigacion" type="text">
+                        </div>
+                        <input class="form-control" type="submit" value="Buscar">
+                    </form>
+                    {% if lineas_investigacion %}
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for l_inv in lineas_investigacion %}
+                                    <tr>
+                                        <td><a href="/editar_lineas_investigacion/{{ l_inv.indice }}">{{ l_inv.nombre }}</a></td>
+                                        <td><a href="/borrar_linea_investigacion/{{ l_inv.indice }}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

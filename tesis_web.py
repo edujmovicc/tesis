@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import json
 from utilidades_tesis import buscar_parecidos
-from tesis_orm import conectar_a_bd, Tesis, Alumno
+from tesis_orm import conectar_a_bd, Tesis, Alumno, Tutor, LineaDeInvestigacion
 
 app = Flask(__name__)
 bd = conectar_a_bd()
@@ -74,6 +74,56 @@ def buscar_tesis():
         return render_template("administracion.html", buscando_tesis="active")
 
 
+@app.route("/buscar_tutores", methods=["POST"])
+def buscar_tutores():
+    if not "cedula_tutor" in request.form:
+        return "Provea un número de cédula", 400
+
+    tutores = bd.query(Tutor).filter(
+        Tutor.cedula.ilike("%{}%".format(request.form["cedula_tutor"]))).all()
+    print(len(tutores))
+    return render_template(
+        "administracion.html", tutores=tutores,
+        buscando_tutores="active"
+        )
+
+
+@app.route("/buscar_lineas_investigacion", methods=["POST"])
+def buscar_lineas_investigacion():
+    if not "linea_investigacion" in request.form:
+        return "Provea parte del nombre, de una línea de investigación", 400
+
+    l_inv = bd.query(LineaDeInvestigacion).filter(
+        LineaDeInvestigacion.nombre.ilike("%{}%".format(request.form["linea_investigacion"]))).all()
+    print(len(l_inv))
+    return render_template(
+        "administracion.html", lineas_investigacion=l_inv,
+        buscando_lineas_investigacion="active"
+        )
+
+
+@app.route("/agregar_linea_investigacion", methods=["POST"])
+def agregar_linea_investigacion():
+    if "linea_investigacion" in request.form:
+        l_inv = LineaDeInvestigacion(nombre=request.form["linea_investigacion"])
+        bd.add(l_inv)
+        bd.commit()
+        return render_template("administracion.html", buscando_lineas_investigacion="active")
+    else:
+        return "Provea una nueva línea de investigación", 400
+
+
+@app.route("/borrar_linea_investigacion/<indice>")
+def borrar_linea_investigacion(indice):
+    l_inv = bd.query(LineaDeInvestigacion).get(indice)
+    if l_inv:
+        bd.delete(l_inv)
+        bd.commit()
+        return render_template("administracion.html", buscando_lineas_investigacion="active")
+    else:
+        return "No existe esa línea de investigación", 400
+
+
 @app.route("/editar_alumno/<indice>", methods=["GET", "POST"])
 def editar_alumno(indice):
     alumno = bd.query(Alumno).get(indice)
@@ -82,6 +132,7 @@ def editar_alumno(indice):
             return render_template("editar_alumno.html", alumno=alumno)
         elif request.method == "POST":
             actualizar_alumno(alumno)
+            return render_template("editar_alumno.html", alumno=alumno)
     else:
         return "No existe el alumno", 400
 
@@ -90,7 +141,7 @@ def actualizar_alumno(alumno):
     alumno.apellido = request.form["apellido"]
     alumno.cedula = request.form["cedula"]
     alumno.carrera = request.form["carrera"]
-    bd.update(alumno)
+    bd.merge(alumno)
     bd.commit()
 
     
@@ -101,19 +152,16 @@ def editar_tesis(indice):
         if request.method == "GET":
             return render_template("editar_tesis.html", tesis=tesis)
         elif request.method == "POST":
-            print(request.__dict__)
             actualizar_tesis(tesis)
-            return "ok"
-            #return render_template("editar_tesis.html", tesis=tesis)
+            return render_template("editar_tesis.html", tesis=tesis)
     else:
         return "No existe la tesis", 400
 
 def actualizar_tesis(tesis):
-    print("Entro actualizar tesis")
-    print(request.form.__dict__)
     tesis.titulo = request.form["titulo"]
     tesis.linea_investigacion = request.form["linea_investigacion"]
     tesis.status = request.form["status"]
+    print(tesis.status)
 
     print("consultando tutor...")
     tutor = bd.query(Tutor).filter(
@@ -132,8 +180,9 @@ def actualizar_tesis(tesis):
 
     tesis.tutor = tutor
     print("actualizando tesis...")
-    bd.update(tesis)
+    bd.merge(tesis)
     bd.commit()
+    print(tesis.status)
     print("salio actualizar tesis")
 
 
