@@ -1,24 +1,99 @@
 {% extends "base.html" %}
 {% block contenido %}
     <div class="container">
-        <form method="POST" action="/editar_alumno/{{ alumno.indice }}">
-            <div class="form-group">
-                <label for="">Cédula: </label>
-                <input class="form-control" name="cedula" type="text" value="{{ alumno.cedula }}">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Editar Alumno</div>
+            <div class="panel-body">
+                <form method="POST" action="/editar_alumno/{{ alumno.indice }}">
+                    <div class="form-group">
+                        <label for="">Cédula: </label>
+                        <input class="form-control" name="cedula" type="text" value="{{ alumno.cedula }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Nombres: </label>
+                        <input class="form-control" name="nombre" type="text" value="{{ alumno.nombre }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Apellidos: </label>
+                        <input class="form-control" name="apellido" type="text" value="{{ alumno.apellido }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Carrera: </label>
+                        <select class="form-control" name="carrera" value="">
+                            <option selected disabled hidden style='display: none' value=''></option>
+                            <option value="Informatica"{% if alumno.carrera == "Informatica" %}selected{% endif %}>INFORMÁTICA</option>
+                            <option value="Mantenimiento de obras" {% if alumno.carrera == "Mantenimiento de obras" %}selected{% endif %}>MANTENIMIENTO DE OBRAS</option>
+                        </select>
+                    </div>
+                    <input class="form-control" type="submit" value="Guardar">
+                </form>
             </div>
-            <div class="form-group">
-                <label for="">Nombres: </label>
-                <input class="form-control" name="nombre" type="text" value="{{ alumno.nombre }}">
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Títulos del Alumno</div>
+            <div class="panel-body">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Línea de investigación</th>
+                            <th>Tutor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cada_tesis in alumno._tesis %}
+                            <tr>
+                                <td><a href="/editar_tesis/{{ cada_tesis.indice }}">{{ cada_tesis.titulo }}</a></td>
+                                <td>{{ cada_tesis.linea_investigacion.nombre }}</td>
+                                <td>{{ cada_tesis.tutor.nombre }}</td>
+                                <td>{{ cada_tesis.status.upper() }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label for="">Apellidos: </label>
-                <input class="form-control" name="apellido" type="text" value="{{ alumno.apellido }}">
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Agregar Título al Alumno</div>
+            <div class="panel-body">
+                <form method="POST" action="/agregar_titulo/{{ alumno.indice }}">
+                    <div class="form-group">
+                        <label for="">Título: </label>
+                        <input class="form-control" name="nuevo_titulo" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Línea de Investigación: </label>
+                        <select class="form-control" name="nueva_linea_investigacion">
+                            <option selected disabled hidden style='display: none' value=''></option>
+                            {% for linea in lineas %}
+                            <option value="{{ linea.indice }}">{{ linea.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Tutor: </label>
+                        <select class="selectpicker" data-live-search="true" name="nuevo_tutor">
+                            <option selected disabled hidden style='display: none' value=''></option>
+                            {% for tutor in tutores %}
+                            <option value="{{ tutor.indice }}">{{ tutor.nombre }} {{ tutor.apellido }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status: </label>
+                        <select name="nuevo_status" class="form-control">
+                            <option selected disabled hidden style='display: none' value=''></option>
+                            <option value="rechazado" >RECHAZADO</option>
+                            <option value="modificable" >MODIFICABLE</option>
+                            <option value="aprobado" >APROBADO</option>
+                            <option value="pendiente" >PENDIENTE</option>
+                        </select>
+                    </div>
+                    </div>
+                    <input class="form-control" type="submit" value="Guardar">
+                </form>
             </div>
-            <div class="form-group">
-                <label for="">Carrera: </label>
-                <input class="form-control" name="carrera" type="text" value="{{ alumno.carrera }}">
-            </div>
-            <input class="form-control" type="submit" value="Guardar">
-        </form>
-    </div>
+        </div>
+    
 {% endblock %}

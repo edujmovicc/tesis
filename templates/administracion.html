@@ -111,7 +111,11 @@
                         </div>
                         <div class="form-group">
                             <label for="">Línea de investigación: </label>
-                            <input class="form-control" name="agregar_tutor_nombre" type="text">
+                            <select class="selectpicker" multiple data-live-search="true" name="agregar_tutor_linea" style="width:100%">
+                                {%  for linea in lineas_investigacion_select %}
+                                <option value="{{ linea.indice }}">{{ linea.nombre }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <input class="form-control" type="submit" value="Agregar">
                     </form>
@@ -143,7 +147,11 @@
                                         <td><a href="/editar_tutor/{{ tutor.indice }}">{{ tutor.cedula }}</a></td>
                                         <td>{{ tutor.nombre }}</td>
                                         <td>{{ tutor.apellido }}</td>
-                                        <td>{{ tutor.linea_investigacion }}</td>
+                                        <td>
+                                        {% for linea in tutor.lineas_investigacion %}
+                                            <span class="label label-primary">{{ linea.nombre }}</span>
+                                        {% endfor %}    
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

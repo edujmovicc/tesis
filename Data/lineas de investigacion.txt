@@ -1,0 +1,43 @@
+# Software
+Lógica y gestión de Base de Datos
+Ingeniería de Software#
+Desarrollo de sistemas distribuidos
+Aplicaciones de Realidad Virtual
+Desarrollo de aplicaciones Web
+Sistemas Y Arquitectura De Proceso
+Aplicación de la Multimedia
+Inteligencia Artificial y Sistemas Expertos
+Sistemas de Computación Gráfica
+Tecnologías de la Información
+
+# Redes
+Administración e integración de Sistemas Operativos
+Redes inalámbricas
+Protocolos de comunicación de datos
+Gestión y monitoreo de redes de computadoras
+Calidad de servicios en redes heterogéneas
+Simulación de redes
+Voz sobre IP y Telefonía IP
+Protocolos de enrutamiento
+Redes avanzadas
+Seguridad en redes de computadoras
+
+# Programacion
+Herramientas de programación y desarrollo de sistemas
+Técnicas de programación de sistemas
+Estructuras de representación de datos
+Lenguajes de programación y desarrollo de sistemas
+
+# Hartdware
+Robótica
+Microprocesador y Micro controladores
+Sistemas de control automático
+Electrónica de comunicaciones
+Diseño de sistemas electrónicos analógicos y digitales
+Sistemas robóticos móviles
+Procesado analógico de señales y Circuitos integrados mixtos
+Multimanipuladores y robots industriales
+Diseño y construcción de antenas y componentes amplificadores
+Diseño de sistemas con tarjetas inteligentes
+Diseño de circuitos integrados de aplicación específica
+Análisis de imagen y sonido mediante el uso de procesadores digitales

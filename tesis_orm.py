@@ -24,7 +24,14 @@ class LineaDeInvestigacion(Base):
 
     indice = Column(String, primary_key=True, default=generar_identificador_unico)
     nombre = Column(String)
-    tutores = relationship("Tutor", back_populates="lineas_investigacion")
+    tutores = relationship("Tutor", secondary="tutor_linea",
+        backref="_lineas_investigacion")
+
+    def __eq__(self, other):
+        return self.nombre == other.nombre
+
+    def __hash__(self):
+        return hash(self.nombre)
 
 
 class Tesis(Base):
@@ -40,6 +47,9 @@ class Tesis(Base):
     autor = relationship("Alumno", backref="_tesis")
     linea_investigacion_id = Column(String, ForeignKey("lineas_de_investigacion.indice"))
     linea_investigacion = relationship("LineaDeInvestigacion", backref="_tesis")
+
+    def __eq__(self, other):
+        return self.indice == other.indice
 
 
 class Alumno(Base):
@@ -59,7 +69,19 @@ class Tutor(Base):
     nombre = Column(String)
     apellido = Column(String, default="")
     cedula = Column(String, default="")
-    lineas_investigacion_id = Column(String, ForeignKey("lineas_de_investigacion.indice"))
-    lineas_investigacion = relationship("LineaDeInvestigacion", back_populates="tutores")
+    lineas_investigacion = relationship("LineaDeInvestigacion",
+        secondary="tutor_linea", backref="_tutores")
+
+    def __hash__(self):
+        return hash(self.nombre)
+
+    def __eq__(self, otro):
+        return self.indice == otro.indice
+
+
+class TutorLinea(Base):
+    __tablename__ = "tutor_linea"
+    tutor_id = Column(String, ForeignKey("tutores.indice"), primary_key=True)
+    linea_id = Column(String, ForeignKey("lineas_de_investigacion.indice"), primary_key=True)
 
 
