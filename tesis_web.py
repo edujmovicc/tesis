@@ -194,6 +194,14 @@ def actualizar_tutor(tutor):
     bd.merge(tutor)
     bd.commit()
 
+@app.route("/borrar_tutor/<indice>", methods=["GET"])
+def borrar_tutor(indice):
+    tutor = bd.query(Tutor).get(indice)
+    if tutor:
+        bd.delete(tutor)
+        bd.commit()
+    return renderizar_panel(buscando_tutores="active")
+
 @app.route("/buscar_lineas_investigacion", methods=["POST"])
 def buscar_lineas_investigacion():
     if not "linea_investigacion" in request.form:

@@ -21,8 +21,8 @@
                         <label for="">Carrera: </label>
                         <select class="form-control" name="carrera" value="">
                             <option selected disabled hidden style='display: none' value=''></option>
-                            <option value="Informatica"{% if alumno.carrera == "Informatica" %}selected{% endif %}>INFORMÁTICA</option>
-                            <option value="Mantenimiento de obras" {% if alumno.carrera == "Mantenimiento de obras" %}selected{% endif %}>MANTENIMIENTO DE OBRAS</option>
+                            <option value="INFORMATICA"{% if alumno.carrera == "INFORMATICA" %}selected{% endif %}>INFORMÁTICA</option>
+                            <option value="MANTENIMIENTO DE OBRAS" {% if alumno.carrera == "MANTENIMIENTO DE OBRAS" %}selected{% endif %}>MANTENIMIENTO DE OBRAS</option>
                         </select>
                     </div>
                     <input class="form-control" type="submit" value="Guardar">
@@ -49,7 +49,7 @@
                                 <td>{{ cada_tesis.linea_investigacion.nombre }}</td>
                                 <td>{{ cada_tesis.tutor.nombre }} {{ cada_tesis.tutor.apellido }}</td>
                                 <td>{{ cada_tesis.status.upper() }}</td>
-                                <td><a href="/borrar_titulo/{{ cada_tesis.indice }}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                <td><span style="cursor:pointer"  onclick="confirmar_borrado(event)" class="glyphicon glyphicon-remove" data-destino="/borrar_titulo/{{ cada_tesis.indice }}"  data-texto="{{ cada_tesis.titulo }}"></span></td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -88,5 +88,4 @@
                 </form>
             </div>
         </div>
-    
 {% endblock %}

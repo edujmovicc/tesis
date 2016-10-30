@@ -38,8 +38,8 @@
                             <label for="">Carrera: </label>
                             <select class="selectpicker" name="agregar_alumno_carrera" style="width:100%">
                                 <option selected disabled hidden style='display: none' value=''></option>
-                                <option value="Informatica">INFORMÁTICA</option>
-                                <option value="Mantenimiento de obras">MANTENIMIENTO DE OBRAS</option>
+                                <option value="INFORMATICA">INFORMÁTICA</option>
+                                <option value="MANTENIMIENTO DE OBRAS">MANTENIMIENTO DE OBRAS</option>
                             </select>
                         </div>
                         <input class="form-control" type="submit" value="Agregar">
@@ -74,9 +74,8 @@
                                 <td>{{ alumno.nombre }}</td>
                                 <td>{{ alumno.apellido }}</td>
                                 <td>{{ alumno.carrera }}</td>
-                                <td><a href="/borrar_alumno/{{ alumno.indice }}">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                </a></td>
+                                <td><span style="cursor:pointer" class="glyphicon glyphicon-remove" onclick="confirmar_borrado(event)" data-destino="/borrar_alumno/{{ alumno.indice }}" data-texto="{{ alumno.nombre}} {{ alumno.apellido }}">
+                                </span></td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -135,6 +134,7 @@
                                     <th>Nombre</th>
                                     <th>Apellido</th>
                                     <th>Línea de investigación</th>
+                                    <!--<th>Borrar</th>-->
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,6 +148,7 @@
                                             <span class="label label-primary">{{ linea.nombre }}</span>
                                         {% endfor %}    
                                         </td>
+                                        <!--<td><span style="cursor:pointer" onclick="confirmar_borrado(event)" class="glyphicon glyphicon-remove" data-destino="/borrar_tutor/{{ tutor.indice }}" data-texto="{{ tutor.nombre }} {{ tutor.apellido }}"></span></td>-->
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -196,7 +197,7 @@
                                 {% for l_inv in lineas_investigacion %}
                                     <tr>
                                         <td><a href="/editar_linea/{{ l_inv.indice }}">{{ l_inv.nombre }}</a></td>
-                                        <td><a href="/borrar_linea_investigacion/{{ l_inv.indice }}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                        <td><span style="cursor:pointer" onclick="confirmar_borrado(event)" class="glyphicon glyphicon-remove" data-destino="/borrar_linea_investigacion/{{ l_inv.indice }}" data-texto="{{ l_inv.nombre }}"></span></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

@@ -37,5 +37,17 @@
             </nav>
         {% block contenido %}
         {% endblock %}
+        <script>
+
+            function confirmar_borrado(event){
+                //event.preventDefault();
+                console.log("entro confirmar borrado");
+                var destino = event.target.getAttribute("data-destino");
+                console.log(destino); 
+                var texto = event.target.getAttribute("data-texto");
+                var confirmacion = confirm("Esta seguro que quiere borrar "+texto+"?")
+                if(confirmacion) window.location = destino;
+            }
+        </script>
     </body>
 </html>

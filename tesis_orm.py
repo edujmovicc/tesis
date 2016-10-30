@@ -3,7 +3,7 @@ import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (create_engine, Column, Integer, String,
     ForeignKey)
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, validates
 
 Base = declarative_base()
 
@@ -33,6 +33,10 @@ class LineaDeInvestigacion(Base):
     def __hash__(self):
         return hash(self.nombre)
 
+    @validates('nombre')
+    def convert_upper(self, key, value):
+        return str(value).upper()
+
 
 class Tesis(Base):
     __tablename__ = "tesis"
@@ -40,8 +44,8 @@ class Tesis(Base):
     indice = Column(String, primary_key=True, default=generar_identificador_unico)
     titulo = Column(String)
     titulo_normalizado = Column(String)
-    status = Column(String, default="pendiente")
-    
+    status = Column(String, default="PENDIENTE")
+
     tutor_indice = Column(String, ForeignKey("tutores.indice"))
     tutor = relationship("Tutor", backref="_tesis")
 
@@ -55,6 +59,10 @@ class Tesis(Base):
     def __eq__(self, other):
         return self.indice == other.indice
 
+    @validates('titulo', "status")
+    def convert_upper(self, key, value):
+        return str(value).upper()
+
 
 class Alumno(Base):
     __tablename__ = "alumnos"
@@ -67,6 +75,10 @@ class Alumno(Base):
 
     def __eq__(self, other):
         return self.indice == other.indice
+
+    @validates('nombre', "apellido", "carrera")
+    def convert_upper(self, key, value):
+        return str(value).upper()
 
  
 class Tutor(Base):
@@ -85,20 +97,16 @@ class Tutor(Base):
     def __eq__(self, otro):
         return self.indice == otro.indice
 
+    @validates('nombre', "apellido")
+    def convert_upper(self, key, value):
+        return str(value).upper()
+
 
 class TutorLinea(Base):
     __tablename__ = "tutor_linea"
     tutor_id = Column(String, ForeignKey("tutores.indice"), primary_key=True)
     linea_id = Column(String, ForeignKey("lineas_de_investigacion.indice"), primary_key=True)
 
-# class TesisTutor(Base):
-#     __tablename__ = "tesis_tutor"
-#     tesis_id = Column(String, ForeignKey("tesis.indice"), primary_key=True)
-#     tutor_id = Column(String, ForeignKey("tutores.indice"), primary_key=True)
 
-# class TesisAlumno(Base):
-#     __tablename__ = "tesis_alumno"
-#     tesis_id = Column(String, ForeignKey("tesis.indice"), primary_key=True)
-#     alumno_id = Column(String, ForeignKey("alumnos.indice"), primary_key=True)
 
 
