@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block contenido %}
+ <div class="container">
+     {% if error %}
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Error!</strong> {{ error }}
+        </div>
+    {% endif %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">Editar Línea de Investigación</div>
+            <div class="panel-body">
+                <form method="POST" action="/editar_linea/{{ linea.indice }}">
+                    <div class="form-group">
+                        <label for="">Nombre: </label>
+                        <input class="form-control" name="nombre" type="text" value="{{ linea.nombre }}">
+                    </div>
+                    <input class="form-control" type="submit" value="Guardar">
+                </form>
+            </div>
+        </div>    
+ </div>
+{% endblock %}

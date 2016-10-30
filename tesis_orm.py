@@ -41,12 +41,16 @@ class Tesis(Base):
     titulo = Column(String)
     titulo_normalizado = Column(String)
     status = Column(String, default="pendiente")
-    nombre_tutor = Column(String, ForeignKey("tutores.nombre"))
+    
+    tutor_indice = Column(String, ForeignKey("tutores.indice"))
     tutor = relationship("Tutor", backref="_tesis")
-    nombre_autor = Column(String, ForeignKey("alumnos.nombre"))
+
+    autor_indice = Column(String, ForeignKey("alumnos.indice"))
     autor = relationship("Alumno", backref="_tesis")
+    
     linea_investigacion_id = Column(String, ForeignKey("lineas_de_investigacion.indice"))
     linea_investigacion = relationship("LineaDeInvestigacion", backref="_tesis")
+
 
     def __eq__(self, other):
         return self.indice == other.indice
@@ -60,6 +64,9 @@ class Alumno(Base):
     apellido = Column(String, default="")
     cedula = Column(String)
     carrera = Column(String, default="")
+
+    def __eq__(self, other):
+        return self.indice == other.indice
 
  
 class Tutor(Base):
@@ -83,5 +90,15 @@ class TutorLinea(Base):
     __tablename__ = "tutor_linea"
     tutor_id = Column(String, ForeignKey("tutores.indice"), primary_key=True)
     linea_id = Column(String, ForeignKey("lineas_de_investigacion.indice"), primary_key=True)
+
+# class TesisTutor(Base):
+#     __tablename__ = "tesis_tutor"
+#     tesis_id = Column(String, ForeignKey("tesis.indice"), primary_key=True)
+#     tutor_id = Column(String, ForeignKey("tutores.indice"), primary_key=True)
+
+# class TesisAlumno(Base):
+#     __tablename__ = "tesis_alumno"
+#     tesis_id = Column(String, ForeignKey("tesis.indice"), primary_key=True)
+#     alumno_id = Column(String, ForeignKey("alumnos.indice"), primary_key=True)
 
 

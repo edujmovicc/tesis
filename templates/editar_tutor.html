@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block contenido %}
     <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Agregar Título al Alumno</div>
+            <div class="panel-body">
         <form method="POST" action="/editar_tutor/{{ tutor.indice }}">
             <div class="form-group">
                 <label for="">Cédula: </label>
@@ -24,5 +27,7 @@
             </div>
             <input class="form-control" type="submit" value="Guardar">
         </form>
+        </div></div>
     </div>
+
 {% endblock %}

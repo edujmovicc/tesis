@@ -5,9 +5,6 @@
             <li class="nav-item {{ buscando_alumnos }}">
                 <a class="nav-link" data-toggle="tab" href="#alumnos" role="tab">Administrar alumnos</a>
             </li>
-            <li class="nav-item {{ buscando_tesis }}">
-                <a class="nav-link" data-toggle="tab" href="#titulos" role="tab">Administrar títulos</a>
-            </li>
             <li class="nav-item {{ buscando_tutores }}">
                 <a class="nav-link" data-toggle="tab" href="#tutores" role="tab">Administrar tutores</a>
             </li>
@@ -20,6 +17,38 @@
 <div class="tab-content">
     <div class="tab-pane {{ buscando_alumnos }}" id="alumnos" role="tabpanel">
         <div class="container">
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Agregar Alumno</div>
+                <div class="panel-body">
+                    <form method="POST" action="/agregar_alumno">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="agregar_alumno_nombre" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Apellido: </label>
+                            <input class="form-control" name="agregar_alumno_apellido" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Cédula: </label>
+                            <input class="form-control" name="agregar_alumno_cedula" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Carrera: </label>
+                            <select class="selectpicker" name="agregar_alumno_carrera" style="width:100%">
+                                <option selected disabled hidden style='display: none' value=''></option>
+                                <option value="Informatica">INFORMÁTICA</option>
+                                <option value="Mantenimiento de obras">MANTENIMIENTO DE OBRAS</option>
+                            </select>
+                        </div>
+                        <input class="form-control" type="submit" value="Agregar">
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Buscar Alumnos</div>
+                <div class="panel-body">
             <form method="POST" action="/buscar_alumnos">
                 <div class="form-group">
                     <label for="">Cédula de identidad: </label>
@@ -35,6 +64,7 @@
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Carrera</th>
+                            <th>Borrar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,52 +74,18 @@
                                 <td>{{ alumno.nombre }}</td>
                                 <td>{{ alumno.apellido }}</td>
                                 <td>{{ alumno.carrera }}</td>
+                                <td><a href="/borrar_alumno/{{ alumno.indice }}">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a></td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             {% endif %}
+            </div>
+            </div>
         </div>
-    </div>
-    <div class="tab-pane {{ buscando_tesis }}" id="titulos" role="tabpanel">
-        <div class="container">
-            <form method="POST" action="/buscar_tesis">
-                <div class="form-group">
-                    <label for="">Cédula de identidad: </label>
-                    <input class="form-control" name="cedula_tesis" type="text">
-                </div>
-                <input class="form-control" type="submit">
-            </form>
-            {% if tesis %}
-                <div class="form-group">
-                    <label for="">{{ alumno.cedula}} </label>
-                    <label for="">{{ alumno.nombre }} </label>
-                    <label for="">{{ alumno.apellido }} </label>
-                </div>
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Línea de investigación</th>
-                            <th>Tutor</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cada_tesis in tesis %}
-                            <tr>
-                                <td><a href="/editar_tesis/{{ cada_tesis.indice }}">{{ cada_tesis.titulo }}</a></td>
-                                <td><!--{{ cada_tesis.linea_investigacion }}--></td>
-                                <td>{{ cada_tesis.tutor.nombre }}</td>
-                                <td><!--{{ cada_tesis.status }}--></td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-    </div>
-
+    </div>   
     <div class="tab-pane {{ buscando_tutores }}" id="tutores" role="tabpanel">
         <div class="container">
             </br>
@@ -193,12 +189,13 @@
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Borrar</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for l_inv in lineas_investigacion %}
                                     <tr>
-                                        <td><a href="/editar_lineas_investigacion/{{ l_inv.indice }}">{{ l_inv.nombre }}</a></td>
+                                        <td><a href="/editar_linea/{{ l_inv.indice }}">{{ l_inv.nombre }}</a></td>
                                         <td><a href="/borrar_linea_investigacion/{{ l_inv.indice }}"><span class="glyphicon glyphicon-remove"></span></a></td>
                                     </tr>
                                 {% endfor %}

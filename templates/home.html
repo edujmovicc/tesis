@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block contenido %}
     <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Buscar títulos similares</div>
+            <div class="panel-body">
         <form method="POST" action="/">
             <div class="form-group">
-                <label for="">Buscar títulos similares: </label>
                 <input class="form-control" name="titulo" type="text">
             </div>
             <input class="form-control" type="submit">
         </form>
+        </div>
+        </div>
     </div>
 {% endblock %}

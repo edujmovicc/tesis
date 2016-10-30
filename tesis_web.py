@@ -1,16 +1,18 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 import json
 from utilidades_tesis import buscar_parecidos, normalizar_titulo
 from tesis_orm import conectar_a_bd, Tesis, Alumno, Tutor, LineaDeInvestigacion
+from clasificacion import ClasificadorLineasInvestigacion
 
 app = Flask(__name__)
 bd = conectar_a_bd()
+clasificador = ClasificadorLineasInvestigacion()
 
 
 @app.route("/", methods=["GET", "POST"])
 def mostrar_homepage():
     if request.method == "GET":
-        return render_template("home.html")
+        return render_template("home.html", sin_identificar=True)
     elif request.method == "POST":
         return buscar_similares()
 
@@ -18,15 +20,25 @@ def buscar_similares():
     titulo = request.form["titulo"]
 
     parecidos = buscar_parecidos(titulo, margen=90)
-    return render_template("resultados.html", parecidos=parecidos)
+    return render_template("resultados.html", parecidos=parecidos, sin_identificar=True)
 
 
 @app.route("/ingresar", methods=["GET", "POST"])
 def ingresar():
     if request.method == "GET":
-        return render_template("ingresar.html")
+        return render_template("ingresar.html", sin_identificar=True)
     if request.method == "POST":
         return autentificar()
+
+
+@app.route("/administrar", methods=["GET"])
+def administrar():
+    if "buscando_tutores" in request.args:
+        return renderizar_panel(buscando_tutores="active")
+    elif "buscando_lineas" in request.args:
+        return renderizar_panel(buscando_lineas="active")
+    else:
+        return renderizar_panel(buscando_alumnos="active")  
 
 
 def autentificar():
@@ -39,7 +51,7 @@ def autentificar():
 
     if request.form["usuario"] == usuario:
         if request.form["clave"] == clave:
-            return renderizar_panel()
+            return redirect(url_for("administrar"))
 
 
 def renderizar_panel(**activo):
@@ -60,6 +72,33 @@ def buscar_alumnos():
         Alumno.cedula.ilike("%{}%".format(request.form["cedula_alumno"]))).all()
     
     return renderizar_panel(buscando_alumnos="active", alumnos=alumnos)
+
+
+@app.route("/agregar_alumno", methods=["POST"])
+def agregar_alumno():
+    campos_obligatorios = [
+        "agregar_alumno_cedula", "agregar_alumno_nombre",
+        "agregar_alumno_apellido", "agregar_alumno_carrera"
+    ]
+
+    if not all([campo in request.form and request.form[campo] for campo in campos_obligatorios]):
+        return "Complete el campo faltante", 400
+    else:
+        alumno = bd.query(Alumno).filter_by(cedula = request.form["agregar_alumno_cedula"]).first()
+        if alumno:
+            return "El alumno ya existe", 400
+        else:
+            alumno = Alumno(
+                nombre = request.form["agregar_alumno_nombre"],
+                apellido = request.form["agregar_alumno_apellido"],
+                cedula = request.form["agregar_alumno_cedula"],
+                carrera = request.form["agregar_alumno_carrera"]
+            )
+            
+            bd.add(alumno)
+            bd.commit()
+            #return renderizar_panel(buscando_alumnos="active")
+            return redirect(url_for("administrar", buscando_alumnos="active"))
 
 
 @app.route("/buscar_tesis", methods=["POST"])
@@ -192,6 +231,7 @@ def borrar_linea_investigacion(indice):
         return "No existe esa línea de investigación", 400
 
 
+
 @app.route("/editar_alumno/<indice>", methods=["GET", "POST"])
 def editar_alumno(indice):
     alumno = bd.query(Alumno).get(indice)
@@ -214,17 +254,43 @@ def actualizar_alumno(alumno):
     bd.merge(alumno)
     bd.commit()
 
+@app.route("/borrar_alumno/<indice>", methods=["GET"])
+def borrar_alumno(indice):
+    alumno = bd.query(Alumno).get(indice)
+    if alumno:
+        bd.delete(alumno)
+        bd.commit()
+        return renderizar_panel(buscando_alumnos="active")
 
-@app.route("/agregar_titulo/<indice>", methods=["POST"])
+
+@app.route("/borrar_titulo/<indice>", methods=["GET"])
+def borrar_titulo(indice):
+    titulo = bd.query(Tesis).get(indice)
+    lineas = bd.query(LineaDeInvestigacion).all()
+    tutores = bd.query(Tutor).all()
+    autor = titulo.autor
+    if indice:
+        bd.delete(titulo)
+        bd.commit()
+    return render_template("editar_alumno.html", alumno=autor, lineas=lineas, tutores=tutores)
+
+
+@app.route("/agregar_titulo/<indice>", methods=["GET", "POST"])
 def agregar_titulo(indice):
+    campos_obligatorios = ["nuevo_tutor", "nuevo_titulo", "nuevo_status"]
+    if any([campo not in request.form for campo in campos_obligatorios]):
+        return "Complete el campo faltante", 400
     alumno = bd.query(Alumno).get(indice)
     lineas = bd.query(LineaDeInvestigacion).all()
     tutores = bd.query(Tutor).all()
     if any([tesis.status == "aprobado" for tesis in alumno._tesis]):
-        return render_template("editar_alumno.html", alumno=alumno, lineas=lineas, tutores=tutores, error="Ya tiene un título aprobado")
+        return render_template(
+            "editar_alumno.html", alumno=alumno,
+            lineas=lineas, tutores=tutores, error="Ya tiene un título aprobado")
     else:
         tutor = bd.query(Tutor).get(request.form["nuevo_tutor"])
-        linea = bd.query(LineaDeInvestigacion).get(request.form["nueva_linea"])
+        linea = obtener_linea_investigacion(request.form["nuevo_titulo"])
+        linea = bd.query(LineaDeInvestigacion).filter_by(nombre=linea).first()
 
         tesis = Tesis(
             titulo = request.form["nuevo_titulo"],
@@ -236,7 +302,13 @@ def agregar_titulo(indice):
         )
         bd.add(tesis)
         bd.commit()
-        return render_template("editar_alumno.html", alumno=alumno, lineas=lineas, tutores=tutores)
+        #return render_template("editar_alumno.html", alumno=alumno, lineas=lineas, tutores=tutores)"
+        return redirect("/editar_alumno/{}".format(alumno.indice))
+
+def obtener_linea_investigacion(titulo):
+    linea = clasificador.clasificar_titulo(titulo)[0]
+    print(linea)
+    return linea
 
     
 @app.route("/editar_tesis/<indice>", methods=["GET", "POST"])
@@ -274,16 +346,43 @@ def actualizar_tesis(tesis):
     return True
 
 
+@app.route("/editar_linea/<indice>", methods=["GET", "POST"])
+def editar_linea(indice):
+    linea = bd.query(LineaDeInvestigacion).get(indice)
+    if linea:
+        if request.method == "GET":
+            return render_template("editar_linea_investigacion.html", linea=linea)
+        elif request.method == "POST":
+
+            status = actualizar_linea(linea)
+            if status == True:
+                return render_template("editar_linea_investigacion.html", linea=linea)
+            else:
+                return render_template("editar_linea_investigacion.html", linea=linea, error=status)
+    else:
+        return "La línea de investigación no existe", 400
+
+
+def actualizar_linea(linea):
+    if "nombre" in request.form and request.form["nombre"]:
+        linea.nombre = request.form["nombre"]
+        bd.merge(linea)
+        bd.commit()
+        return True
+    else:
+        return "Por favor ingrese un nombre de línea de investigación."
+
+
 
 
 
 @app.route('/static/<path>')
-def send_js(path):
+def serve_static(path):
     return send_from_directory('static/', path)
-    
-@app.route('/static/<path>')
-def send_css(path):
-    return send_from_directory('static/', path)
+
+@app.route('/fonts/<path>')
+def serve_fonts(path):
+    return send_from_directory('static/fonts/', path)
 
 
 if __name__ == "__main__":

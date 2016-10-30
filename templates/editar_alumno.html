@@ -39,6 +39,7 @@
                             <th>Línea de investigación</th>
                             <th>Tutor</th>
                             <th>Status</th>
+                            <th>Borrar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,8 +47,9 @@
                             <tr>
                                 <td><a href="/editar_tesis/{{ cada_tesis.indice }}">{{ cada_tesis.titulo }}</a></td>
                                 <td>{{ cada_tesis.linea_investigacion.nombre }}</td>
-                                <td>{{ cada_tesis.tutor.nombre }}</td>
+                                <td>{{ cada_tesis.tutor.nombre }} {{ cada_tesis.tutor.apellido }}</td>
                                 <td>{{ cada_tesis.status.upper() }}</td>
+                                <td><a href="/borrar_titulo/{{ cada_tesis.indice }}"><span class="glyphicon glyphicon-remove"></span></a></td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -60,16 +62,7 @@
                 <form method="POST" action="/agregar_titulo/{{ alumno.indice }}">
                     <div class="form-group">
                         <label for="">Título: </label>
-                        <input class="form-control" name="nuevo_titulo" type="text">
-                    </div>
-                    <div class="form-group">
-                        <label for="">Línea de Investigación: </label>
-                        <select class="form-control" name="nueva_linea_investigacion">
-                            <option selected disabled hidden style='display: none' value=''></option>
-                            {% for linea in lineas %}
-                            <option value="{{ linea.indice }}">{{ linea.nombre }}</option>
-                            {% endfor %}
-                        </select>
+                        <textarea class="form-control" name="nuevo_titulo" ></textarea>
                     </div>
                     <div class="form-group">
                         <label for="">Tutor: </label>
