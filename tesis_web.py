@@ -1,5 +1,10 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 import json
+import os
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.security import Security, SQLAlchemyUserDatastore, \
+    UserMixin, RoleMixin, login_required, logout_user
+from flask.ext.security.forms import LoginForm
 from utilidades_tesis import buscar_parecidos, normalizar_titulo
 from tesis_orm import conectar_a_bd, Tesis, Alumno, Tutor, LineaDeInvestigacion
 from clasificacion import ClasificadorLineasInvestigacion
@@ -7,6 +12,44 @@ from clasificacion import ClasificadorLineasInvestigacion
 app = Flask(__name__)
 bd = conectar_a_bd()
 clasificador = ClasificadorLineasInvestigacion()
+
+BASE_DIR = os.path.dirname(__file__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}test.db'.format(BASE_DIR)
+app.config['SECRET_KEY'] = 'super-secret'
+app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_REGISTER_URL'] = '/crear_usuario'
+app.config["SECURITY_LOGIN_URL"] = "/acceder"
+app.config["SECURITY_POST_LOGIN_VIEW"] = "/administrar"
+app.config["SECURITY_LOGOUT_URL"] = "/cerrar_sesion"
+
+auth_db = SQLAlchemy(app)
+# Define models
+roles_users = auth_db.Table('roles_users',
+        auth_db.Column('user_id', auth_db.Integer(), auth_db.ForeignKey('user.id')),
+        auth_db.Column('role_id', auth_db.Integer(), auth_db.ForeignKey('role.id')))
+
+class Role(auth_db.Model, RoleMixin):
+    id = auth_db.Column(auth_db.Integer(), primary_key=True)
+    name = auth_db.Column(auth_db.String(80), unique=True)
+    description = auth_db.Column(auth_db.String(255))
+
+class User(auth_db.Model, UserMixin):
+    id = auth_db.Column(auth_db.Integer, primary_key=True)
+    email = auth_db.Column(auth_db.String(255), unique=True)
+    password = auth_db.Column(auth_db.String(255))
+    active = auth_db.Column(auth_db.Boolean())
+    confirmed_at = auth_db.Column(auth_db.DateTime())
+    roles = auth_db.relationship('Role', secondary=roles_users,
+                            backref=auth_db.backref('users', lazy='dynamic'))
+                            
+user_datastore = SQLAlchemyUserDatastore(auth_db, User, Role)
+security = Security(app, user_datastore)
+
+@app.before_first_request
+def create_user():
+    auth_db.create_all()
+    auth_db.session.commit()                            
+                            
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -61,7 +104,7 @@ def renderizar_panel(**activo):
 # ALUMNOS
 @app.route("/administrar", methods=["GET"])
 def administrar():
-    return render_template("administrar_alumnos.html")
+    return render_template("administrar_alumnos.html", active_menu="alumnos")
     
 @app.route("/buscar_alumnos", methods=["POST"])
 def buscar_alumnos():
@@ -133,7 +176,9 @@ def obtener_linea_y_tutores():
 @app.route("/administrar_tutores", methods=["GET"])
 def administrar_tutores():
     lineas_investigacion = bd.query(LineaDeInvestigacion).all()
-    return render_template("administrar_tutores.html", lineas_investigacion_select=lineas_investigacion)
+    return render_template("administrar_tutores.html",
+        lineas_investigacion_select=lineas_investigacion, 
+        active_menu="tutores")
     
     
 @app.route("/buscar_tutores", methods=["POST"])
@@ -231,7 +276,7 @@ def borrar_tutor(indice):
     
 @app.route("/administrar_lineas_investigacion", methods=["GET"])
 def administrar_lineas_investigacion():
-    return render_template("administrar_lineas_investigacion.html")
+    return render_template("administrar_lineas_investigacion.html", active_menu="lineas")
 
 
 @app.route("/buscar_lineas_investigacion", methods=["POST"])
