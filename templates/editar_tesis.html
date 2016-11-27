@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block contenido %}
+{% extends "user_panel.html" %}
+{% block content %}
     <div class="container">
         <div class="panel panel-primary">
             <div class="panel-heading">Agregar Título al Alumno</div>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="form-group">
                         <label for="">Linea de investigación: </label>
-                        <select class="form-control" name="linea_investigacion">
+                        <select class="form-control" name="linea_investigacion" disabled>
                             <option selected disabled hidden style='display: none' value=''></option>
                             {% for linea in lineas_investigacion %}
                             <option value="{{ linea.indice }}" {% if tesis.linea_investigacion.nombre == linea.nombre %}selected{% endif %}>{{ linea.nombre }}</option>

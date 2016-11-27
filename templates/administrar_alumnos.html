@@ -1,0 +1,72 @@
+{% extends "user_panel.html" %}
+
+{% block content %}
+<div class="container">
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading tema-tesis">Agregar Alumno</div>
+                <div class="panel-body">
+                    <form method="POST" action="/agregar_alumno">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="agregar_alumno_nombre" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Apellido: </label>
+                            <input class="form-control" name="agregar_alumno_apellido" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Cédula: </label>
+                            <input class="form-control" name="agregar_alumno_cedula" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Carrera: </label>
+                            <select class="selectpicker" name="agregar_alumno_carrera" style="width:100%">
+                                <option selected disabled hidden style='display: none' value=''></option>
+                                <option value="INFORMATICA">INFORMÁTICA</option>
+                                <option value="MANTENIMIENTO DE OBRAS">MANTENIMIENTO DE OBRAS</option>
+                            </select>
+                        </div>
+                        <input class="form-control" type="submit" value="Agregar">
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Buscar Alumnos</div>
+                <div class="panel-body">
+            <form method="POST" action="/buscar_alumnos">
+                <div class="form-group">
+                    <label for="">Cédula de identidad: </label>
+                    <input class="form-control" name="cedula_alumno" type="text">
+                </div>
+                <input class="form-control" type="submit" style="margin-bottom:25px">
+            </form>
+            {% if alumnos %}
+                <table class="table table-bordered table-hover" id="tabla_alumnos">
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Carrera</th>
+                            <th>Borrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alumno in alumnos %}
+                            <tr>
+                                <td><a href="/editar_alumno/{{ alumno.indice }}">{{ alumno.cedula }}</a></td>
+                                <td>{{ alumno.nombre }}</td>
+                                <td>{{ alumno.apellido }}</td>
+                                <td>{{ alumno.carrera }}</td>
+                                <td><span style="cursor:pointer" class="glyphicon glyphicon-remove" onclick="confirmar_borrado(event)" data-destino="/borrar_alumno/{{ alumno.indice }}" data-texto="{{ alumno.nombre}} {{ alumno.apellido }}">
+                                </span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+            </div>
+            </div>
+        </div>
+{% endblock %}

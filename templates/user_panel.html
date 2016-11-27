@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- AdminLTE archivos -->
+        <!-- Bootstrap 3.3.6 -->
+        <link rel="stylesheet" href="/static/AdminLTE/bootstrap/css/bootstrap.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="/static/AdminLTE/dist/css/AdminLTE.css">
+        <!-- AdminLTE Skins. Choose a skin from the css/skins
+            folder instead of downloading all of them to reduce the load. -->
+        <link rel="stylesheet" href="/static/AdminLTE/dist/css/skins/_all-skins.css">
+        <!-- iCheck -->
+        <link rel="stylesheet" href="/static/AdminLTE/plugins/iCheck/flat/blue.css">
+        <!-- Morris chart -->
+        <link rel="stylesheet" href="/static/AdminLTE/plugins/morris/morris.css">
+        <!-- jvectormap -->
+        <link rel="stylesheet" href="/static/AdminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+        <!-- Date Picker -->
+        <link rel="stylesheet" href="/static/AdminLTE/plugins/datepicker/datepicker3.css">
+        <!-- Daterange picker -->
+        <link rel="stylesheet" href="/static/AdminLTE/plugins/daterangepicker/daterangepicker.css">
+        <!-- bootstrap wysihtml5 - text editor -->
+        <link rel="stylesheet" href="/static/AdminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+        <!-- fin de AdminLTE -->
+    
+        <!-- datatables -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.css"/>
+        <!-- bootstrap-select -->
+        <link rel="stylesheet" href="/static/bootstrap-select.min.css">
+        <!-- estilos personalizados -->
+        <link rel="stylesheet" href="/static/tesis.css">
+    </head>
+    <body class="hold-transition skin-blue sidebar-mini">
+        <div class="wrapper" style="margin-bottom:50px">
+            <header class="main-header">
+                <a class="logo">
+                    <img src="/static/UAH_LOGO.png" style="height:80px"></img>
+                </a>
+            </header>
+        </div>
+        {% block content %}
+        {% endblock %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="/static/bootstrap-select.min.js"></script>
+        <script src="/static/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.js"></script>
+    
+        <script src="/static/AdminLTE/dist/js/app.min.js"></script>
+        <script src="/static/tesis.js"></script>
+    </body>
+</html>

@@ -14,13 +14,15 @@ def mostrar_homepage():
     if request.method == "GET":
         return render_template("home.html", sin_identificar=True)
     elif request.method == "POST":
+        print("es una busqueda")
         return buscar_similares()
 
 def buscar_similares():
     titulo = request.form["titulo"]
-
+    print(titulo)
     parecidos = buscar_parecidos(titulo, margen=90)
-    return render_template("resultados.html", parecidos=parecidos, sin_identificar=True)
+    print(len(parecidos))
+    return render_template("home.html", parecidos=parecidos, sin_identificar=True)
 
 
 @app.route("/ingresar", methods=["GET", "POST"])
@@ -31,14 +33,6 @@ def ingresar():
         return autentificar()
 
 
-@app.route("/administrar", methods=["GET"])
-def administrar():
-    if "buscando_tutores" in request.args:
-        return renderizar_panel(buscando_tutores="active")
-    elif "buscando_lineas" in request.args:
-        return renderizar_panel(buscando_lineas="active")
-    else:
-        return renderizar_panel(buscando_alumnos="active")  
 
 
 def autentificar():
@@ -63,6 +57,12 @@ def renderizar_panel(**activo):
     )
 
 
+
+# ALUMNOS
+@app.route("/administrar", methods=["GET"])
+def administrar():
+    return render_template("administrar_alumnos.html")
+    
 @app.route("/buscar_alumnos", methods=["POST"])
 def buscar_alumnos():
     if not "cedula_alumno" in request.form:
@@ -71,9 +71,9 @@ def buscar_alumnos():
     alumnos = bd.query(Alumno).filter(
         Alumno.cedula.ilike("%{}%".format(request.form["cedula_alumno"]))).all()
     
-    return renderizar_panel(buscando_alumnos="active", alumnos=alumnos)
-
-
+    #return renderizar_panel(buscando_alumnos="active", alumnos=alumnos)
+    return render_template("administrar_alumnos.html", alumnos=alumnos)
+    
 @app.route("/agregar_alumno", methods=["POST"])
 def agregar_alumno():
     campos_obligatorios = [
@@ -99,40 +99,58 @@ def agregar_alumno():
             bd.commit()
             #return renderizar_panel(buscando_alumnos="active")
             return redirect(url_for("administrar", buscando_alumnos="active"))
-
-
-@app.route("/buscar_tesis", methods=["POST"])
-def buscar_tesis():
-    if not "cedula_tesis" in request.form:
-        return "Provea un número de cédula", 400
-
-    alumno = bd.query(Alumno).filter(
-        Alumno.cedula.ilike(request.form["cedula_tesis"])
-    ).first()
+            
+        
+@app.route("/obtener_linea_y_tutores", methods=["POST"])
+def obtener_linea_y_tutores():
+    data = json.loads(request.data.decode("utf8"))
+    print(data)
+    if not "nuevo_titulo" in data or not data["nuevo_titulo"]:
+        return "Se require el titulo", 400
     
-    if alumno:
-        return renderizar_panel(
-            tesis=alumno._tesis,
-            alumno=alumno,
-            buscando_tesis="active"
-        )
-    else:
-        return renderizar_panel(buscando_tesis="active")
+    nombre_linea = obtener_linea_investigacion(data["nuevo_titulo"])
+    if nombre_linea:
+        linea = bd.query(LineaDeInvestigacion).filter_by(nombre=nombre_linea).first()
+        if linea:
+            print(linea.__dict__)
+            tutores = linea.tutores
+            return json.dumps({
+                "linea": nombre_linea,
+                "tutores": [
+                    [tutor.indice, "{} {}".format(tutor.nombre, tutor.apellido)]
+                    for tutor in tutores
+                ]
+            })
+    return "", 400
+    
+    
+    
+    
+    
 
 
+# TUTORES    
+@app.route("/administrar_tutores", methods=["GET"])
+def administrar_tutores():
+    lineas_investigacion = bd.query(LineaDeInvestigacion).all()
+    return render_template("administrar_tutores.html", lineas_investigacion_select=lineas_investigacion)
+    
+    
 @app.route("/buscar_tutores", methods=["POST"])
 def buscar_tutores():
     if not "cedula_tutor" in request.form:
         return "Provea un número de cédula", 400
-
+    lineas_investigacion = bd.query(LineaDeInvestigacion).all()
     tutores = bd.query(Tutor).filter(
         Tutor.cedula.ilike("%{}%".format(request.form["cedula_tutor"]))).all()
 
-    return renderizar_panel(
-        tutores=tutores,
-        buscando_tutores="active"
-    )
-
+    # return renderizar_panel(
+    #     tutores=tutores,
+    #     buscando_tutores="active"
+    # )
+    return render_template("administrar_tutores.html", tutores=tutores, lineas_investigacion_select=lineas_investigacion)
+    
+    
 @app.route("/agregar_tutor", methods=["POST"])
 def agregar_tutor():
     campos_obligatorios = [
@@ -144,6 +162,7 @@ def agregar_tutor():
         return "Complete el campo {}".format(campo), 400
     else:
         tutor = bd.query(Tutor).filter_by(cedula = request.form["agregar_tutor_cedula"]).first()
+        lineas_investigacion = bd.query(LineaDeInvestigacion).all()
         if tutor:
             return "El tutor ya existe", 400
         else:
@@ -164,7 +183,9 @@ def agregar_tutor():
 
             bd.add(tutor)
             bd.commit()
-            return renderizar_panel(buscando_tutores="active")
+            #return renderizar_panel(buscando_tutores="active")
+            return render_template("administrar_tutores.html", lineas_investigacion_select=lineas_investigacion)
+
 
 @app.route("/editar_tutor/<indice>", methods=["GET", "POST"])
 def editar_tutor(indice):
@@ -197,10 +218,21 @@ def actualizar_tutor(tutor):
 @app.route("/borrar_tutor/<indice>", methods=["GET"])
 def borrar_tutor(indice):
     tutor = bd.query(Tutor).get(indice)
+    lineas_investigacion = bd.query(LineaDeInvestigacion).all()
     if tutor:
         bd.delete(tutor)
         bd.commit()
-    return renderizar_panel(buscando_tutores="active")
+    #return renderizar_panel(buscando_tutores="active")
+    return render_template("administrar_tutor.html", lineas_investigacion_select = lineas_investigacion)
+
+    
+    
+# LINEAS INVESTIGACION
+    
+@app.route("/administrar_lineas_investigacion", methods=["GET"])
+def administrar_lineas_investigacion():
+    return render_template("administrar_lineas_investigacion.html")
+
 
 @app.route("/buscar_lineas_investigacion", methods=["POST"])
 def buscar_lineas_investigacion():
@@ -210,10 +242,7 @@ def buscar_lineas_investigacion():
     l_inv = bd.query(LineaDeInvestigacion).filter(
         LineaDeInvestigacion.nombre.ilike("%{}%".format(request.form["linea_investigacion"]))).all()
 
-    return renderizar_panel(
-        lineas_investigacion=l_inv,
-        buscando_lineas_investigacion="active"
-    )
+    return render_template("administrar_lineas_investigacion.html", lineas_investigacion=l_inv)
 
 
 @app.route("/agregar_linea_investigacion", methods=["POST"])
@@ -237,6 +266,32 @@ def borrar_linea_investigacion(indice):
         return renderizar_panel(buscando_lineas_investigacion="active")
     else:
         return "No existe esa línea de investigación", 400
+
+
+
+
+
+@app.route("/buscar_tesis", methods=["POST"])
+def buscar_tesis():
+    if not "cedula_tesis" in request.form:
+        return "Provea un número de cédula", 400
+
+    alumno = bd.query(Alumno).filter(
+        Alumno.cedula.ilike(request.form["cedula_tesis"])
+    ).first()
+    
+    if alumno:
+        return renderizar_panel(
+            tesis=alumno._tesis,
+            alumno=alumno,
+            buscando_tesis="active"
+        )
+    else:
+        return renderizar_panel(buscando_tesis="active")
+
+
+
+
 
 
 
@@ -285,19 +340,17 @@ def borrar_titulo(indice):
 
 @app.route("/agregar_titulo/<indice>", methods=["GET", "POST"])
 def agregar_titulo(indice):
-    campos_obligatorios = ["nuevo_tutor", "nuevo_titulo", "nuevo_status"]
+    campos_obligatorios = ["tutor_nuevo_titulo", "nuevo_titulo",
+    "status_nuevo_titulo", "linea_nuevo_titulo"]
     if any([campo not in request.form for campo in campos_obligatorios]):
         return "Complete el campo faltante", 400
     alumno = bd.query(Alumno).get(indice)
-    lineas = bd.query(LineaDeInvestigacion).all()
-    tutores = bd.query(Tutor).all()
     if any([tesis.status == "aprobado" for tesis in alumno._tesis]):
         return render_template(
-            "editar_alumno.html", alumno=alumno,
-            lineas=lineas, tutores=tutores, error="Ya tiene un título aprobado")
+            "editar_alumno.html", alumno=alumno, error="Ya tiene un título aprobado")
     else:
-        tutor = bd.query(Tutor).get(request.form["nuevo_tutor"])
-        linea = obtener_linea_investigacion(request.form["nuevo_titulo"])
+        tutor = bd.query(Tutor).get(request.form["tutor_nuevo_titulo"])
+        linea = request.form["linea_nuevo_titulo"]
         linea = bd.query(LineaDeInvestigacion).filter_by(nombre=linea).first()
 
         tesis = Tesis(
@@ -306,12 +359,13 @@ def agregar_titulo(indice):
             linea_investigacion = linea,
             autor = alumno,
             titulo_normalizado = normalizar_titulo(request.form["nuevo_titulo"]),
-            status = request.form["nuevo_status"]
+            status = request.form["status_nuevo_titulo"]
         )
         bd.add(tesis)
         bd.commit()
         #return render_template("editar_alumno.html", alumno=alumno, lineas=lineas, tutores=tutores)"
         return redirect("/editar_alumno/{}".format(alumno.indice))
+
 
 def obtener_linea_investigacion(titulo):
     linea = clasificador.clasificar_titulo(titulo)[0]
@@ -381,10 +435,7 @@ def actualizar_linea(linea):
         return "Por favor ingrese un nombre de línea de investigación."
 
 
-
-
-
-@app.route('/static/<path>')
+    
 def serve_static(path):
     return send_from_directory('static/', path)
 

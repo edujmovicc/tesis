@@ -1,0 +1,51 @@
+{% extends "user_panel.html" %}
+
+{% block content %}
+<div class="container">
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Agregar línea de investigación</div>
+                <div class="panel-body">
+                    <form method="POST" action="/agregar_linea_investigacion">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="linea_investigacion" type="text">
+                        </div>
+                        <input class="form-control" type="submit" value="Agregar">
+                    </form>
+                </div>
+            </div>
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Buscar líneas de investigación</div>
+                <div class="panel-body">
+                    <form method="POST" action="/buscar_lineas_investigacion">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="linea_investigacion" type="text">
+                        </div>
+                        <input class="form-control" type="submit" value="Buscar">
+                    </form>
+                    {% if lineas_investigacion %}
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Borrar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for l_inv in lineas_investigacion %}
+                                    <tr>
+                                        <td><a href="/editar_linea/{{ l_inv.indice }}">{{ l_inv.nombre }}</a></td>
+                                        <td><span style="cursor:pointer" onclick="confirmar_borrado(event)" class="glyphicon glyphicon-remove" data-destino="/borrar_linea_investigacion/{{ l_inv.indice }}" data-texto="{{ l_inv.nombre }}"></span></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+{% endblock %}

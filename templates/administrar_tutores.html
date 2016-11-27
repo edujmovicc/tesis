@@ -1,0 +1,76 @@
+{% extends "user_panel.html" %}
+
+{% block content %}
+<div class="container">
+            </br>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Agregar tutor</div>
+                <div class="panel-body">
+                    <form method="POST" action="/agregar_tutor">
+                        <div class="form-group">
+                            <label for="">Nombre: </label>
+                            <input class="form-control" name="agregar_tutor_nombre" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Apellido: </label>
+                            <input class="form-control" name="agregar_tutor_apellido" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Cédula: </label>
+                            <input class="form-control" name="agregar_tutor_cedula" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Línea de investigación: </label>
+                            <select class="form-control selectpicker" multiple data-live-search="true" name="agregar_tutor_linea" style="width:100%">
+                                {%  for linea in lineas_investigacion_select %}
+                                <option value="{{ linea.indice }}">{{ linea.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input class="form-control" type="submit" value="Agregar">
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Buscar tutor</div>
+                <div class="panel-body">
+                    <form method="POST" action="/buscar_tutores">
+                        <div class="form-group">
+                            <label for="">Cédula de identidad: </label>
+                            <input class="form-control" name="cedula_tutor" type="text">
+                        </div>
+                        <input class="form-control" type="submit" style="margin-bottom:25px">
+                    </form>
+                    {% if tutores %}
+                        <table class="table table-bordered table-hover"
+                        id="tabla_tutores">
+                            <thead>
+                                <tr>
+                                    <th>Cédula</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Línea de investigación</th>
+                                    <!--<th>Borrar</th>-->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tutor in tutores %}
+                                    <tr>
+                                        <td><a href="/editar_tutor/{{ tutor.indice }}">{{ tutor.cedula }}</a></td>
+                                        <td>{{ tutor.nombre }}</td>
+                                        <td>{{ tutor.apellido }}</td>
+                                        <td>
+                                        {% for linea in tutor.lineas_investigacion %}
+                                            <span class="label label-primary">{{ linea.nombre }}</span>
+                                        {% endfor %}    
+                                        </td>
+                                        <!--<td><span style="cursor:pointer" onclick="confirmar_borrado(event)" class="glyphicon glyphicon-remove" data-destino="/borrar_tutor/{{ tutor.indice }}" data-texto="{{ tutor.nombre }} {{ tutor.apellido }}"></span></td>-->
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+{% endblock %}

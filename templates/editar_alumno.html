@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block contenido %}
+{% extends "user_panel.html" %}
+{% block content %}
     <div class="container">
         <div class="panel panel-primary">
             <div class="panel-heading">Editar Alumno</div>
@@ -62,26 +62,27 @@
                 <form method="POST" action="/agregar_titulo/{{ alumno.indice }}">
                     <div class="form-group">
                         <label for="">Título: </label>
-                        <textarea class="form-control" name="nuevo_titulo" ></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Tutor: </label>
-                        <select class="selectpicker" data-live-search="true" name="nuevo_tutor">
-                            <option selected disabled hidden style='display: none' value=''></option>
-                            {% for tutor in tutores %}
-                            <option value="{{ tutor.indice }}">{{ tutor.nombre }} {{ tutor.apellido }}</option>
-                            {% endfor %}
-                        </select>
+                        <textarea class="form-control" name="nuevo_titulo" id="nuevo_titulo" onblur="obtenerLineaYTutores()"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="status">Status: </label>
-                        <select name="nuevo_status" class="form-control">
+                        <select name="status_nuevo_titulo" class="form-control">
                             <option selected disabled hidden style='display: none' value=''></option>
                             <option value="rechazado" >RECHAZADO</option>
                             <option value="modificable" >MODIFICABLE</option>
                             <option value="aprobado" >APROBADO</option>
                             <option value="pendiente" >PENDIENTE</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Tutor: </label>
+                        <select class="form-control select2 select2-hidden-accesible" data-live-search="true" name="tutor_nuevo_titulo" id="tutor_nuevo_titulo">
+                            <option selected disabled hidden style='display: none' value=''></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Línea de Investigación</label>
+                        <input type="text" class="form-control" name="linea_nuevo_titulo" readonly="readonly" id="linea_nuevo_titulo"/>
                     </div>
                     </div>
                     <input class="form-control" type="submit" value="Guardar">

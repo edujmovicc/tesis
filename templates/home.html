@@ -1,16 +1,43 @@
 {% extends "base.html" %}
 {% block contenido %}
-    <div class="container">
+    <div class="row">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-10">
         <div class="panel panel-primary">
             <div class="panel-heading">Buscar títulos similares</div>
-            <div class="panel-body">
-        <form method="POST" action="/">
-            <div class="form-group">
-                <input class="form-control" name="titulo" type="text">
+                <div class="panel-body">
+                <form method="POST" action="/">
+                    <div class="form-group">
+                        <input class="form-control" name="titulo" type="text">
+                    </div>
+                    <input class="form-control" type="submit">
+                </form>
+                {% if parecidos %}
+                <table class="table table-bordered table-hover stripe" id="tabla_titulos">
+                    <thead>
+                        <tr>
+                            <th>Titulo</th>
+                            <th>Autor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tesis in parecidos %}
+                            <tr>
+                                <td>{{ tesis.titulo }}</td>
+                                <td>{{ tesis.autor.nombre }} {{ tesis.autor.apellido }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
             </div>
-            <input class="form-control" type="submit">
-        </form>
+            
         </div>
+        </div>
+        <div class="col-xs-1"></div>
         </div>
     </div>
+    <script type="text/javascript" src="">
+        
+    </script>
 {% endblock %}
