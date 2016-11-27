@@ -1,3 +1,5 @@
+/* global $ */
+
 $(document).ready(load)
  var g_tabla_titulos, g_tabla_alumnos, g_tabla_tutores;
  var table_language = {
@@ -90,3 +92,4 @@ function confirmar_borrado(event){
     var confirmacion = confirm("Esta seguro que quiere borrar "+texto+"?")
     if(confirmacion) window.location = destino;
 }
+

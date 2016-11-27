@@ -1,0 +1,62 @@
+{% extends "./base.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+
+{% block contenido %}
+{% include "security/_messages.html" %}
+{{ get_flashed_messages() }}
+<div onLoad="traducir_login()" class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10">
+        <div class="panel panel-primary" style="border-color: #222d32!important;">
+            <div class="panel-heading tema-tesis">Login</div>
+                <div class="panel-body">
+                    <form action="{{ url_for_security('login') }}" method="POST" name="login_form">
+                      {{ login_form.hidden_tag() }}
+                      <div class="form-group">
+                          {{ render_field_with_errors(login_form.email) }}
+                      </div>
+                      <div class="form-group">
+                      {{ render_field_with_errors(login_form.password) }}
+                      </div>
+                      <div class="form-group">
+                      {{ render_field_with_errors(login_form.remember) }}
+                      </div>
+                      {{ render_field(login_form.next) }}
+                      {{ render_field(login_form.submit) }}
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <a href="/crear_usuario">Registrar un usuario nuevo</a>
+                </div>
+        </div>
+    </div>
+    <div class="col-xs-1"></div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function(event) { 
+  traducir_login()
+});
+
+    function traducir_login(){
+        var etiqueta_email = $("#email");
+        etiqueta_email.attr("class", "form-control");
+        etiqueta_email.siblings()[0].innerText = "Dirección de correo: ";
+        
+        var etiqueta_clave = $("#password");
+        etiqueta_clave.attr("class", "form-control");
+        etiqueta_clave.siblings()[0].innerText = "Contraseña: ";
+
+        var etiqueta_recordarme = $("#remember");
+        etiqueta_recordarme.attr("class", "checkbox");
+        etiqueta_recordarme.siblings()[0].innerText = "Recordarme";
+        
+        var boton_submit = document.getElementById("submit");
+        boton_submit.className = "form-control";
+        boton_submit.value = "Acceder";
+    }
+</script>
+
+
+
+{% endblock %}

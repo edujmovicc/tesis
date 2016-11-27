@@ -4,27 +4,27 @@
 <div class="container">
             </br>
             <div class="panel panel-primary">
-                <div class="panel-heading">Agregar línea de investigación</div>
+                <div class="panel-heading">Agregar Línea de Investigación</div>
                 <div class="panel-body">
                     <form method="POST" action="/agregar_linea_investigacion">
                         <div class="form-group">
                             <label for="">Nombre: </label>
                             <input class="form-control" name="linea_investigacion" type="text">
                         </div>
-                        <input class="form-control" type="submit" value="Agregar">
+                        <input class="form-control tema-tesis boton-tesis" type="submit" value="Agregar">
                     </form>
                 </div>
             </div>
             </br>
             <div class="panel panel-primary">
-                <div class="panel-heading">Buscar líneas de investigación</div>
+                <div class="panel-heading">Buscar Líneas de Investigación</div>
                 <div class="panel-body">
                     <form method="POST" action="/buscar_lineas_investigacion">
                         <div class="form-group">
                             <label for="">Nombre: </label>
                             <input class="form-control" name="linea_investigacion" type="text">
                         </div>
-                        <input class="form-control" type="submit" value="Buscar">
+                        <input class="form-control tema-tesis boton-tesis" type="submit" value="Buscar">
                     </form>
                     {% if lineas_investigacion %}
                         <table class="table table-bordered table-hover">

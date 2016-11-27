@@ -1,0 +1,60 @@
+{% extends "./base.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+{% block contenido %}
+{% include "security/_messages.html" %}
+<div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10">
+        <div class="panel panel-primary" style="border-color: #222d32!important;">
+            <div class="panel-heading tema-tesis">Crear Nuevo Administrador</div>
+                <div class="panel-body">
+                    <form action="{{ url_for_security('register') }}" method="POST" name="register_form">
+                      {{ formulario_registro.hidden_tag() }}
+                      <div class="form-group">
+                          {{ render_field_with_errors(formulario_registro.email) }}
+                      </div>
+                      <div class="form-group">
+                      {{ render_field_with_errors(formulario_registro.password) }}
+                      </div>
+                      <div class="form-group">
+                      {{ render_field_with_errors(formulario_registro.password_confirm) }}
+                      </div>
+                      {{ render_field(formulario_registro.next) }}
+                      {{ render_field(formulario_registro.submit) }}
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <a href="/acceder">Acceder con un usuario existente</a>
+                </div>
+        </div>
+    </div>
+    <div class="col-xs-1"></div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) { 
+        traducir_registro()
+    });
+    
+    function traducir_registro(){
+        var etiqueta_email = $("#email");
+        etiqueta_email.attr("class", "form-control");
+        etiqueta_email.siblings()[0].innerText = "Dirección de correo: ";
+        
+        var etiqueta_clave = $("#password");
+        etiqueta_clave.attr("class", "form-control");
+        etiqueta_clave.siblings()[0].innerText = "Contraseña: ";
+        
+        var etiqueta_confirmar = $("#password_confirm");
+        etiqueta_confirmar.attr("class", "form-control");
+        etiqueta_confirmar.siblings()[0].innerText = "Confirmar contraseña: ";
+        
+        var boton_submit = document.getElementById("submit");
+        boton_submit.className = "form-control";
+        boton_submit.value = "Registrar";
+    }
+</script>
+
+
+
+{% endblock %}

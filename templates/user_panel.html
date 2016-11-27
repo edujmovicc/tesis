@@ -33,8 +33,10 @@
         <link rel="stylesheet" href="/static/bootstrap-select.min.css">
         <!-- estilos personalizados -->
         <link rel="stylesheet" href="/static/tesis.css">
+        <link rel="shortcut icon" href="/static/UAH_LOGO.jpg" />
+        <title>UAH - Gestión de títulos de grado</title>
     </head>
-    <body class="hold-transition skin-blue sidebar-mini">
+    <body class="hold-transition skin-blue sidebar-mini" onLoad="girar_titulo()">
         <div class="wrapper">
             <header class="main-header">
                 <a class="logo" href="/">
@@ -44,10 +46,17 @@
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
                             <li class="dropdown user user-menu">
-                                <a href="/cerrar_sesion" style="height:80px">
+                                <a href="#" style="height:80px" class="dropdown-toggle" data-toggle="dropdown">
                                   <img src="/static/AdminLTE/dist/img/avatar.jpg" class="user-image" alt="User Image">
-                                  <span class="hidden-xs">Cerrar sesión</span>
+                                  {% if usuario_actual.email %}
+                                    <span class="hidden-xs" style="color:#fff">{{ usuario_actual.email }}</span>
+                                  {% endif %}
                                 </a>
+                                <ul class="dropdown-menu" role="menu" style="width:178px; background-color:#d41820">
+                                    <li>
+                                        <a href="/cerrar_sesion" style="color:#ffffff">Cerrar sesión</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </div>
@@ -81,13 +90,8 @@
             <div class="content-wrapper">
                 <section class="content-header">
                   <h1>
-                    Dashboard
-                    <small>Control panel</small>
+                    Panel de Administrador
                   </h1>
-                  <ol class="breadcrumb">
-                    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active">Dashboard</li>
-                  </ol>
                 </section>    
                 <section class="content">
                     {% block content %}
@@ -95,7 +99,15 @@
                 </section>
             </div>
         </div>
-        
+        <script>
+          var scrl = " UAH - Gestión de tesis de grado. ";
+            function girar_titulo() {
+             scrl = scrl.substring(1, scrl.length) + scrl.substring(0, 1);
+             document.title = scrl;
+             setTimeout("girar_titulo()", 200);
+             }
+             
+        </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="/static/bootstrap-select.min.js"></script>
         <script src="/static/bootstrap.min.js"></script>

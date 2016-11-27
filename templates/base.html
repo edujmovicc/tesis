@@ -40,16 +40,17 @@
  
         <link rel="stylesheet" href="/static/tesis.css">
         <!-- fin datatables -->
-
+        <link rel="shortcut icon" href="/static/UAH_LOGO.jpg" />
+        <title>UAH - Gestión de títulos de grado</title>
     </head>
-    <body class="skin-black wysihtml5-supported sidebar-collapse">
+    <body class="skin-black wysihtml5-supported sidebar-collapse" onLoad="girar_titulo()">
         
         <div class="wrapper">
            <header class="main-header">
               <nav class="navbar navbar-static-top" style="margin-left:0px; height:80px;background-color:#eb1b23">
                 <div class="container-fluid">
                 <div class="navbar-header">
-                  <a href="#" class="navbar-brand" style="height:80px; padding:0px 0px;"><img src="/static/UAH_LOGO.png" style="height:80px;background-color:#eb1b23"></img></a>
+                  <a href="/" class="navbar-brand" style="height:80px; padding:0px 0px;"><img src="/static/UAH_LOGO.png" style="height:80px;background-color:#eb1b23"></img></a>
                   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                     <i class="fa fa-bars"></i>
                   </button>
@@ -61,7 +62,11 @@
                     <li>
                       <a class="custom-a" href="/acceder" style="height:80px">
                         <img src="/static/AdminLTE/dist/img/avatar.jpg" class="user-image" style="height:25px;width:25px" alt="User Image">
+                        {% if usuario_actual.email %}
+                        <span class="hidden-xs" style="color:#fff">{{ usuario_actual.email }}</span>
+                        {% else %}
                         <span class="hidden-xs" style="color:#fff">Iniciar sesión</span>
+                        {% endif %}
                       </a>
                     </li>
                   </ul>
@@ -79,6 +84,15 @@
                 </section>
             </div>
         </div>
+        <script>
+          var scrl = " UAH - Gestión de tesis de grado. ";
+            function girar_titulo() {
+             scrl = scrl.substring(1, scrl.length) + scrl.substring(0, 1);
+             document.title = scrl;
+             setTimeout("girar_titulo()", 200);
+             }
+             
+        </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="/static/bootstrap-select.min.js"></script>
         <script src="/static/bootstrap.min.js"></script>

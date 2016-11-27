@@ -4,13 +4,13 @@
         <div class="col-xs-1"></div>
         <div class="col-xs-10">
         <div class="panel panel-primary" style="border-color: #222d32!important;">
-            <div class="panel-heading tema-tesis">Buscar títulos similares</div>
+            <div class="panel-heading tema-tesis">Buscar Títulos Similares</div>
                 <div class="panel-body">
                 <form method="POST" action="/">
                     <div class="form-group">
                         <input class="form-control" name="titulo" type="text">
                     </div>
-                    <input class="form-control" type="submit">
+                    <input class="form-control tema-tesis boton-tesis" type="submit" value="Buscar">
                 </form>
                 {% if parecidos %}
                 <table class="table table-bordered table-hover stripe" id="tabla_titulos">
